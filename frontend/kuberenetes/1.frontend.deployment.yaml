@@ -24,6 +24,8 @@ spec:
       containers:
         - name: frontend
           image: ghcr.io/ishtiaqsamdani007/vote-k8s-frontend:latest
+          imagePullSecrets:
+            - name: my-docker-secret
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 80
