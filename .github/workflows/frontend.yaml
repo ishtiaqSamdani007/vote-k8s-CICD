@@ -53,7 +53,7 @@ jobs:
         with:
           context: ./frontend
           push: true
-          tags: ghcr.io/${{ env.GITHUB_USER }}/frontend:latest
+          tags: ghcr.io/${{ env.GITHUB_USER }}/vote-k8s-frontend:latest
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
@@ -66,7 +66,7 @@ jobs:
         env:
           aws_region: ${{ secrets.AWS_REGION }}
           cluster_name: ${{ secrets.CLUSTER_NAME }}
-          IMAGE: ghcr.io/${{ env.GITHUB_USER }}/frontend:latest
+          IMAGE: ghcr.io/${{ env.GITHUB_USER }}/vote-k8s-frontend:latest
         run: |
           aws eks --region $aws_region update-kubeconfig --name $cluster_name
           kubectl create namespace cloudacademy --dry-run=client -o yaml | kubectl apply -f -
