@@ -69,5 +69,7 @@ jobs:
           IMAGE: ghcr.io/${{ env.GITHUB_USER }}/frontend:latest
         run: |
           aws eks --region $aws_region update-kubeconfig --name $cluster_name
+          kubectl create namespace cloudacademy
+          kubectl config set-context --current --namespace=cloudacademy
           kubectl apply -f kuberenetes/1.frontend.deployment.yaml
           kubectl apply -f kuberenetes/2.frontend.service.yaml
