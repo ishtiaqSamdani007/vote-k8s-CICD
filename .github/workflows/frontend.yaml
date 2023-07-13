@@ -69,3 +69,24 @@ jobs:
           kubectl create namespace cloudacademy --dry-run=client -o yaml | kubectl apply -f -
           kubectl config set-context --current --namespace=cloudacademy
           kubectl set image deployment/frontend frontend=$IMAGE
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
