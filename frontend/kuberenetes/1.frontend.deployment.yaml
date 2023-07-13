@@ -24,7 +24,7 @@ spec:
       containers:
         - name: frontend
           image: ghcr.io/ishtiaqsamdani007/vote-k8s-frontend:latest
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: Always
           ports:
             - containerPort: 80
           livenessProbe:

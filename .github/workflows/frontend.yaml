@@ -3,12 +3,9 @@ on:
   push:
     paths:
       - "frontend/**"
-      - "!frontend/db/**"
-      - ".github/workflows/frontend.yaml"
     branches:
-        - master
-        - main
-    workflow_dispatch:
+      - main
+      - master
 env:
     GITHUB_USER: ishtiaqsamdani007
 jobs:
@@ -32,11 +29,11 @@ jobs:
         uses: actions/cache@v2
         with:
           path: node_modules
-          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package.json') }}
 
       - name: Install dependencies
         if: steps.cache.outputs.cache-hit != 'true'
-        run: npm install --legacy-peer-deps
+        run: npm install
 
       - name: Build application
         run: npm run build
