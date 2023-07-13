@@ -1,73 +1,104 @@
-apiVersion: v1
-kind: Service
-metadata:
-  name: mongo
-  namespace: cloudacademy
-  labels:
-    role: db
-    env: demo
-spec:
-  ports:
-  - port: 27017
-    targetPort: 27017
-  clusterIP: None
-  selector:
-    role: db
----
-apiVersion: apps/v1beta1
+apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   name: mongo
   namespace: cloudacademy
 spec:
-  serviceName: mongo
+  selector:
+    matchLabels:
+      app: mongo
+  serviceName: "mongo"
   replicas: 3
   template:
     metadata:
       labels:
-        role: db
-        env: demo
-        replicaset: rs0.main
+        app: mongo
     spec:
-      affinity:
-        podAntiAffinity:
-          preferredDuringSchedulingIgnoredDuringExecution:
-          - weight: 100
-            podAffinityTerm:
-              labelSelector:
-                matchExpressions:
-                - key: replicaset
-                  operator: In
-                  values:
-                  - rs0.main
-              topologyKey: kubernetes.io/hostname
-      terminationGracePeriodSeconds: 10
       containers:
         - name: mongo
-          image: mongo
+          image: mongo:4.0.8
+          startupProbe:
+            exec:
+              command:
+                - mongo
+                - --eval
+                - "db.adminCommand('ping')"
+            initialDelaySeconds: 1
+            periodSeconds: 10
+            timeoutSeconds: 5
+            successThreshold: 1
+            failureThreshold: 2
+          livenessProbe:
+            exec:
+              command:
+                - mongo
+                - --eval
+                - "db.adminCommand('ping')"
+            initialDelaySeconds: 1
+            periodSeconds: 10
+            timeoutSeconds: 5
+            successThreshold: 1
+            failureThreshold: 2
+          readinessProbe:
+            exec:
+              command:
+                - mongo
+                - --eval
+                - "db.adminCommand('ping')"
+            initialDelaySeconds: 1
+            periodSeconds: 10
+            timeoutSeconds: 5
+            successThreshold: 1
+            failureThreshold: 2
+          env:
+            - name: MONGO_INITDB_ROOT_USERNAME
+              valueFrom:
+                configMapKeyRef:
+                  key: username
+                  name: mongodb-config
+            - name: MONGO_INITDB_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: password
+                  name: mongodb-secret
           command:
-            - "numactl"
-            - "--interleave=all"
-            - "mongod"
-            - "--wiredTigerCacheSizeGB"
-            - "0.1"
-            - "--bind_ip"
-            - "0.0.0.0"
-            - "--replSet"
-            - "rs0"
-          ports:
-            - containerPort: 27017
+            - mongod
+            - "--bind_ip_all"
+            - --config=/etc/mongo/mongodb.conf
           volumeMounts:
-            - name: mongodb-persistent-storage-claim
+            - name: mongo-volume
               mountPath: /data/db
+            - name: mongodb-config
+              mountPath: /etc/mongo
+      volumes:
+        - name: mongodb-config
+          configMap:
+            name: mongodb-config
+            items:
+              - key: mongodb.conf
+                path: mongodb.conf
   volumeClaimTemplates:
-  - metadata:
-      name: mongodb-persistent-storage-claim
-      namespace: cloudacademy
-      annotations:
-        volume.beta.kubernetes.io/storage-class: "standard"
-    spec:
-      accessModes: [ "ReadWriteOnce" ]
-      resources:
-        requests:
-          storage: 1Gi
+    - metadata:
+        name: mongo-volume
+        namespace: cloudacademy
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        storageClassName: demo-storage
+        resources:
+          requests:
+            storage: 1Gi
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mongo
+  namespace: cloudacademy
+spec:
+  ports:
+    - name: mongo
+      port: 27017
+      targetPort: 27017
+  clusterIP: None
+  selector:
+    app: mongo
