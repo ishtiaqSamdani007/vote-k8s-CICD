@@ -4,9 +4,6 @@ on:
     paths:
       - "frontend/**"
       - ".github/workflows/frontend.yaml"
-    branches:
-      - main
-      - master
 env:
     GITHUB_USER: ishtiaqsamdani007
 jobs:
