@@ -3,11 +3,7 @@ on:
   push:
     paths:
       - "frontend/**"
-      - "!frontend/db/**"
       - ".github/workflows/frontend.yaml"
-    branches:
-        - master
-        - main
 env:
     GITHUB_USER: ishtiaqsamdani007
 jobs:
@@ -31,11 +27,11 @@ jobs:
         uses: actions/cache@v2
         with:
           path: node_modules
-          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package.json') }}
 
       - name: Install dependencies
         if: steps.cache.outputs.cache-hit != 'true'
-        run: npm install --legacy-peer-deps
+        run: npm install
 
       - name: Build application
         run: npm run build
@@ -52,7 +48,7 @@ jobs:
         with:
           context: ./frontend
           push: true
-          tags: ghcr.io/${{ env.GITHUB_USER }}/vote-k8s-frontend:latest
+          tags: ghcr.io/${{ env.GITHUB_USER }}/vote-k8s-frontend:${{ github.sha }}
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
@@ -65,10 +61,26 @@ jobs:
         env:
           aws_region: ${{ secrets.AWS_REGION }}
           cluster_name: ${{ secrets.CLUSTER_NAME }}
-          IMAGE: ghcr.io/${{ env.GITHUB_USER }}/vote-k8s-frontend:latest
+          IMAGE: ghcr.io/${{ env.GITHUB_USER }}/vote-k8s-frontend:${{ github.sha }}
         run: |
           aws eks --region $aws_region update-kubeconfig --name $cluster_name
           kubectl create namespace cloudacademy --dry-run=client -o yaml | kubectl apply -f -
           kubectl config set-context --current --namespace=cloudacademy
-          kubectl apply -f kuberenetes/1.frontend.deployment.yaml
-          kubectl apply -f kuberenetes/2.frontend.service.yaml
+          kubectl set image deployment/frontend frontend=$IMAGE
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
