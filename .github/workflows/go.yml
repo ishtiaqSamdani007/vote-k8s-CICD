@@ -2,13 +2,9 @@ name: CICD
 
 on:
   push:
-    tags:
-      - '1.*.*'
-  pull_request:
-    branches:
-      - master
-#  schedule:
-#    - cron: "0 0 * * *"
+    paths:
+      - "api-go/**"
+      - ".github/workflows/go.yaml"
 
 jobs:
   build:
