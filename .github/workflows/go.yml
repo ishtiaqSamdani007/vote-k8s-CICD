@@ -4,7 +4,7 @@ on:
   push:
     paths:
       - "api-go/**"
-      - ".github/workflows/go.yaml"
+      - ".github/workflows/go.yml"
 
 jobs:
   build:
