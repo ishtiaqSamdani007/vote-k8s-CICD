@@ -1,104 +1,93 @@
-apiVersion: apps/v1
-kind: StatefulSet
-metadata:
-  name: mongo
-  namespace: cloudacademy
-spec:
-  selector:
-    matchLabels:
-      app: mongo
-  serviceName: "mongo"
-  replicas: 3
-  template:
-    metadata:
-      labels:
-        app: mongo
-    spec:
-      containers:
-        - name: mongo
-          image: mongo:4.0.8
-          startupProbe:
-            exec:
-              command:
-                - mongo
-                - --eval
-                - "db.adminCommand('ping')"
-            initialDelaySeconds: 1
-            periodSeconds: 10
-            timeoutSeconds: 5
-            successThreshold: 1
-            failureThreshold: 2
-          livenessProbe:
-            exec:
-              command:
-                - mongo
-                - --eval
-                - "db.adminCommand('ping')"
-            initialDelaySeconds: 1
-            periodSeconds: 10
-            timeoutSeconds: 5
-            successThreshold: 1
-            failureThreshold: 2
-          readinessProbe:
-            exec:
-              command:
-                - mongo
-                - --eval
-                - "db.adminCommand('ping')"
-            initialDelaySeconds: 1
-            periodSeconds: 10
-            timeoutSeconds: 5
-            successThreshold: 1
-            failureThreshold: 2
-          env:
-            - name: MONGO_INITDB_ROOT_USERNAME
-              valueFrom:
-                configMapKeyRef:
-                  key: username
-                  name: mongodb-config
-            - name: MONGO_INITDB_ROOT_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  key: password
-                  name: mongodb-secret
-          command:
-            - mongod
-            - "--bind_ip_all"
-            - --config=/etc/mongo/mongodb.conf
-          volumeMounts:
-            # - name: mongo-volume
-            #   mountPath: /data/db
-            - name: mongodb-config
-              mountPath: /etc/mongo
-      volumes:
-        - name: mongodb-config
-          configMap:
-            name: mongodb-config
-            items:
-              - key: mongodb.conf
-                path: mongodb.conf
-  # volumeClaimTemplates:
-  #   - metadata:
-  #       name: mongo-volume
-  #       namespace: cloudacademy
-  #     spec:
-  #       accessModes: ["ReadWriteOnce"]
-  #       storageClassName: demo-storage
-  #       resources:
-  #         requests:
-  #           storage: 1Gi
+# ---
+#   apiVersion: v1
+#   kind: PersistentVolumeClaim
+#   metadata: 
+#     name: mongodb-pvc
+#     namespace: cloudacademy
+#     labels: 
+#       app: mongo-db
+#   spec: 
+#     accessModes: 
+#       - ReadWriteOnce
+#     resources: 
+#       requests: 
+#         storage: 1Gi
+#     storageClassName: gp2
+# ---
+  apiVersion: apps/v1
+  kind: StatefulSet
+  metadata: 
+    name: mongo-db
+    namespace: cloudacademy
+  spec:
+    serviceName: mongo-db 
+    replicas: 3
+    selector: 
+      matchLabels: 
+        app: mongo-db
+    template: 
+      metadata: 
+        labels: 
+          app: mongo-db
+      spec: 
+        containers: 
+          - 
+            name: mongo-db
+            image: mongo:latest
+            imagePullPolicy: Always
+            env: 
+              - 
+                name: MONGO_INITDB_ROOT_USERNAME
+                value: admin
+                
+              -
+                name: MONGO_INITDB_ROOT_PASSWORD
+                value: admin
+            command:
+              - "mongod"
+              - "--bind_ip"
+              - "0.0.0.0"
+              - "--replSet"
+              - "MainRepSet"
+            
+            
+            ports: 
+              - 
+                containerPort: 27017
+                name: mongodb
+                
+            volumeMounts: 
+              - 
+                name: mongodb-persistent-storage
+                mountPath: /data/db
+                
+    volumeClaimTemplates:
+    - metadata:
+        name: mongodb-persistent-storage
+        namespace: cloudacademy
+        annotations:
+          volume.beta.kubernetes.io/storage-class: "gp2"
+      spec:
+        accessModes: [ "ReadWriteOnce" ]
+        resources:
+          requests:
+            storage: 1Gi
+              
 
 ---
-apiVersion: v1
-kind: Service
-metadata:
-  name: mongo
-  namespace: cloudacademy
-spec:
-  ports:
-    - name: mongo
-      port: 27017
-      targetPort: 27017
-  clusterIP: None
-  selector:
-    app: mongo
+  apiVersion: v1
+  kind: Service
+  metadata: 
+    name: mongo-db
+    namespace: cloudacademy
+    labels: 
+      app: mongo-db
+  spec: 
+    ports: 
+      - 
+        name: mongodb
+        port: 27017
+        targetPort: 27017
+    clusterIP: None
+    selector: 
+      app: mongo-db
