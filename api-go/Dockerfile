@@ -1,7 +1,9 @@
 FROM alpine:latest
 
+WORKDIR /app
+
 COPY api .
 
-EXPOSE 8080
-
 CMD ["./api"]
+
+EXPOSE 8080
