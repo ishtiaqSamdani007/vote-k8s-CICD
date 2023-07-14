@@ -5,7 +5,8 @@ on:
     paths:
       - "api-go/**"
       - ".github/workflows/go.yaml"
-
+env:
+  GITHUB_USER: ishtiaqsamdani007
 jobs:
   build:
     runs-on: ubuntu-latest
