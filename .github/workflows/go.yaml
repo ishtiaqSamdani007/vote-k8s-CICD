@@ -57,5 +57,4 @@ jobs:
         aws eks --region $aws_region update-kubeconfig --name $cluster_name
         kubectl create namespace cloudacademy --dry-run=client -o yaml | kubectl apply -f -
         kubectl config set-context --current --namespace=cloudacademy
-        kubectl apply -f kuberenetes/1.api.deployment.yaml
-        kubectl apply -f kuberenetes/2.api.service.yaml
+        kubectl set image deployment/api api=$IMAGE
