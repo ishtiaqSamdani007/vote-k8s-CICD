@@ -23,7 +23,7 @@ spec:
     spec:
       containers:
       - name: api
-        image:  ghcr.io/ishtiaqsamdani007/vote-k8s-api:latest
+        image:  ghcr.io/ishtiaqsamdani007/vote-k8s-api:44d4ef10c76d5e600e2fbd5c61b2ec4fc53824eb
         imagePullPolicy: IfNotPresent
         env:
         - name: MONGO_CONN_STR
