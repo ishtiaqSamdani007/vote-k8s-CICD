@@ -55,3 +55,18 @@ jobs:
         kubectl config set-context --current --namespace=cloudacademy
         kubectl apply -f kuberenetes/1.api.deployment.yaml
         kubectl apply -f kuberenetes/2.api.service.yaml
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
