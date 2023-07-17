@@ -4,4 +4,3 @@ scannerwork
 coverage
 dist
 /frontend/secrets
-.env
