@@ -57,9 +57,3 @@ jobs:
         kubectl apply -f kuberenetes/2.api.service.yaml
 
 
-
-
-
-
-
-
