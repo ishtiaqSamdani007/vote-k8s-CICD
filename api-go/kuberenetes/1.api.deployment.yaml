@@ -27,7 +27,7 @@ spec:
         imagePullPolicy: IfNotPresent
         env:
         - name: MONGO_CONN_STR
-          value: "mongodb://mongo-0.mongo,mongo-1.mongo,mongo-2.mongo:27017/langdb"
+          value: "mongodb://mongo-db-0.mongo-db,mongo-db-1.mongo-db,mongo-db-2.mongo-db:27017/langdb"
         ports:
         - containerPort: 8080
         livenessProbe:
