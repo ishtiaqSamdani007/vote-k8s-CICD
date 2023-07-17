@@ -24,6 +24,9 @@ spec:
       containers:
         - name: frontend
           image: ghcr.io/ishtiaqsamdani007/vote-k8s-frontend:latest
+          env:
+            - name: REACT_APP_APIHOSTPORT
+              value: bc.spcluster.tk
           imagePullPolicy: Always
           ports:
             - containerPort: 80

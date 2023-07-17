@@ -23,6 +23,7 @@ class ProgrammingLanguage extends Component {
         loaded: true
       })
     );
+    console.log(`http://${this.APIHOSTPORT}/languages/${this.props.id}`);
   }
 
   render () {

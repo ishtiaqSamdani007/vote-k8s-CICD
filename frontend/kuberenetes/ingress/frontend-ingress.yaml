@@ -6,8 +6,9 @@ metadata:
   annotations:
     nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
+  ingressClassName: nginx
   rules:
-    - host: ac95fa8e35cd8410ab9cf63c21169ea3-b48d93d50d9b5920.elb.us-east-2.amazonaws.com
+    - host: fr.spcluster.tk
       http:
         paths:
           - path: /
@@ -17,6 +18,16 @@ spec:
                 name: frontend
                 port:
                   number: 80
+    - host: bc.spcluster.tk
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: api
+                port:
+                  number: 8080
 
 
 
