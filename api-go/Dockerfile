@@ -12,10 +12,10 @@ RUN go mod download
 COPY . .
 
 # Build the Go application
-RUN go build -o myapp
+RUN go build -o api
 
 # Expose a port if your application listens on a specific port
 EXPOSE 8080
 
 # Run the Go application when the container starts
-CMD ["./myapp"]
+CMD ["./api"]
