@@ -23,11 +23,11 @@ spec:
     spec:
       containers:
         - name: frontend
-          image: ghcr.io/ishtiaqsamdani007/vote-k8s-frontend:latest
+          image: ghcr.io/ishtiaqsamdani007/vote-k8s-frontend:10000
+          imagePullPolicy: Always
           env:
             - name: REACT_APP_APIHOSTPORT
               value: bc.spcluster.tk
-          imagePullPolicy: Always
           ports:
             - containerPort: 80
           livenessProbe:
@@ -45,3 +45,9 @@ spec:
             successThreshold: 1
       imagePullSecrets:
         - name: my-docker-secret
+
+
+
+
+
+
